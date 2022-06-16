@@ -3,18 +3,19 @@ package ru.ravel.qrRef.controllers;
 import com.google.zxing.WriterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import ru.ravel.qrRef.dto.Message;
+import ru.ravel.qrRef.enums.messageType;
 import ru.ravel.qrRef.services.KeyService;
 import ru.ravel.qrRef.services.QrService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @Controller
 public class MainController {
@@ -25,24 +26,32 @@ public class MainController {
     KeyService keyService;
 
     @GetMapping("/")
-    public String getRootMapping()  {
+    public String getRootMapping() {
         return "Main";
     }
 
-    @GetMapping("/qr")
-    public ResponseEntity<Object> getQrMapping(HttpServletResponse response) throws IOException, WriterException {
-        String data = keyService.generateKey(20);
-        String path = data + ".png";
-        Path imgFile = qrService.createQrFile("qrref:" + data, path, 400, 400);
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        Files.copy(imgFile, response.getOutputStream());
-        imgFile.toFile().delete();
+    @GetMapping("/getKey")
+    public ResponseEntity<Object> getKeyMapping()  {
+        String key = keyService.generateKey(20);
+        return ResponseEntity.status(HttpStatus.OK).body(key);
+    }
+
+    @GetMapping("/getQr/{key}")
+    public ResponseEntity<Object> getQrMapping(HttpServletResponse response,
+                                               @PathVariable String key) throws IOException, WriterException {
+        qrService.getQr(key, response);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/qrref:{key}")
-    public ResponseEntity<Object> getKeyMapping(@PathVariable String key) {
-        keyService.sendStrToFront(key);
+    @PostMapping("/qrRef:{key}")
+    public ResponseEntity<Object> getKeyMapping(@PathVariable String key,
+                                                @RequestParam String text) {
+        Message message = Message.builder()
+                .key(key)
+                .message(text)
+                .messageType(messageType.URL)
+                .build();
+        keyService.sendStrToFront(message);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package ru.ravel.qrRef.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import ru.ravel.qrRef.dto.Message;
 
 import java.util.Random;
 
@@ -22,8 +23,8 @@ public class KeyService {
         return outStr.toString();
     }
 
-    public void sendStrToFront(String str) {
-        this.simpMessaging.convertAndSend("/topic/activity", str);
+    public void sendStrToFront(Message message) {
+        simpMessaging.convertAndSend("/topic/activity", message);
     }
 
 }
