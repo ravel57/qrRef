@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import ru.ravel.qrRef.services.KeyGenerator;
+import ru.ravel.qrRef.services.KeyService;
 import ru.ravel.qrRef.services.QrService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,13 +22,18 @@ public class MainController {
     @Autowired
     QrService qrService;
     @Autowired
-    KeyGenerator keyService;
+    KeyService keyService;
 
     @GetMapping("/")
-    public ResponseEntity<Object> getMainMapping(HttpServletResponse response) throws IOException, WriterException {
+    public String getRootMapping()  {
+        return "Main";
+    }
+
+    @GetMapping("/qr")
+    public ResponseEntity<Object> getQrMapping(HttpServletResponse response) throws IOException, WriterException {
         String data = keyService.generateKey(20);
         String path = data + ".png";
-        Path imgFile = qrService.createQR("qrref:" + data, path, 400, 400);
+        Path imgFile = qrService.createQrFile("qrref:" + data, path, 400, 400);
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         Files.copy(imgFile, response.getOutputStream());
         imgFile.toFile().delete();
@@ -36,9 +41,8 @@ public class MainController {
     }
 
     @GetMapping("/qrref:{key}")
-    public ResponseEntity<Object> getKeyMapping(HttpServletResponse response,
-                                                @PathVariable String key) {
-
+    public ResponseEntity<Object> getKeyMapping(@PathVariable String key) {
+        keyService.sendStrToFront(key);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
