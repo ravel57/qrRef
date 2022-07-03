@@ -13,6 +13,7 @@ import ru.ravel.qrRef.dto.Message;
 import ru.ravel.qrRef.enums.messageType;
 import ru.ravel.qrRef.services.KeyService;
 import ru.ravel.qrRef.services.QrService;
+import ru.ravel.qrRef.services.SocketService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -24,34 +25,41 @@ public class MainController {
     QrService qrService;
     @Autowired
     KeyService keyService;
+    @Autowired
+    SocketService socketService;
 
     @GetMapping("/")
-    public String getRootMapping() {
+    public String getRoot() {
         return "Main";
     }
 
+    @GetMapping("/favicon.ico")
+    public ResponseEntity<Object> getFavicon() {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/getKey")
-    public ResponseEntity<Object> getKeyMapping()  {
+    public ResponseEntity<Object> getKey() {
         String key = keyService.generateKey(20);
         return ResponseEntity.status(HttpStatus.OK).body(key);
     }
 
     @GetMapping("/getQr/{key}")
-    public ResponseEntity<Object> getQrMapping(HttpServletResponse response,
-                                               @PathVariable String key) throws IOException, WriterException {
+    public ResponseEntity<Object> getQr(HttpServletResponse response,
+                                        @PathVariable String key) {
         qrService.getQr(key, response);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/qrRef:{key}")
-    public ResponseEntity<Object> getKeyMapping(@PathVariable String key,
-                                                @RequestParam String text) {
+    public ResponseEntity<Object> postKey(@PathVariable String key,
+                                          @RequestParam String text) {
         Message message = Message.builder()
                 .key(key)
                 .message(text)
-                .messageType(messageType.URL)
+                .messageType(messageType.TEXT)
                 .build();
-        keyService.sendStrToFront(message);
+        socketService.sendStrToFront(message);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

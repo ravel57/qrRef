@@ -35,6 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+###
 /gradle/wrapper/gradle-wrapper.jar
 /src/main/webapp/css/
 /src/main/webapp/js/
+/src/main/resources/cer.pfx

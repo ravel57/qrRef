@@ -10,7 +10,7 @@ import ru.ravel.qrRef.enums.messageType;
 @Getter
 @Builder
 public class Message {
-    public String key;
-    public messageType messageType;
-    public String message;
+    private String key;
+    private messageType messageType;
+    private String message;
 }
