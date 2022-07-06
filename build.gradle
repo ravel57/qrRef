@@ -7,7 +7,7 @@ plugins {
 
 group = 'ru.ravel'
 version = '1'
-sourceCompatibility = '1.8'
+sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
@@ -23,9 +23,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '9.0.22'
-    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.4.0-b180725.0427'
-    compile group: 'javax.servlet', name: 'jstl', version: '1.2'
+    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '9.0.22'
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    implementation group: 'javax.servlet', name: 'jstl', version: '1.2'
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
@@ -43,10 +43,10 @@ dependencies {
     implementation 'org.webjars:stomp-websocket:2.3.3'
 
     implementation 'org.webjars:bootstrap:3.3.7'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
     implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 
 }
 

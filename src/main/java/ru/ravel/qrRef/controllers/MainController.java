@@ -1,6 +1,5 @@
 package ru.ravel.qrRef.controllers;
 
-import com.google.zxing.WriterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,6 @@ import ru.ravel.qrRef.services.QrService;
 import ru.ravel.qrRef.services.SocketService;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Controller
 public class MainController {
@@ -51,7 +49,7 @@ public class MainController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/qrRef:{key}")
+    @PostMapping("/{key}")
     public ResponseEntity<Object> postKey(@PathVariable String key,
                                           @RequestParam String text) {
         Message message = Message.builder()

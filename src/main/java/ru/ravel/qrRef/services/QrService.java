@@ -26,18 +26,17 @@ public class QrService {
 
 
     private void createQrFile(String data, Path path) throws WriterException, IOException {
-        Map<EncodeHintType, Object> hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+        Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-        hints.put(EncodeHintType.MARGIN, 0);
+        hints.put(EncodeHintType.MARGIN, 1);
         BitMatrix matrix = new MultiFormatWriter().encode(data, BarcodeFormat.QR_CODE, width, height, hints);
         MatrixToImageWriter.writeToPath(matrix, format, path);
     }
 
     public void getQr(String key, HttpServletResponse response) {
         try {
-            Path path = Path.of(
-                    String.format("%s.%s", key, format));
-            String data = String.format("qrRef:%s", key);
+            Path path = Path.of(String.format("%s.%s", key, format));
+            String data = String.format("%s/?key=%s", System.getenv("url"), key);
             createQrFile(data, path);
             response.setContentType(MediaType.IMAGE_PNG_VALUE);
             Files.copy(path, response.getOutputStream());
