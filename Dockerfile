@@ -7,11 +7,11 @@ RUN ["yarn", "install"]
 RUN ["yarn", "build"]
 
 FROM gradle:7.4.2-jdk11-alpine AS gradle
-COPY --chown=gradle:gradle . /home/gradle/src
+COPY --chown=gradle:gradle . /home/gradle/
 COPY --from=nodejs /usr/src/node/qrref-front/dist/js/app*.js           /home/gradle/src/main/webapp/js/app.js
 COPY --from=nodejs /usr/src/node/qrref-front/dist/js/chunk-vendors*.js /home/gradle/src/main/webapp/js/chunk-vendors.js
 COPY --from=nodejs /usr/src/node/qrref-front/dist/css/app*.css         /home/gradle/src/main/webapp/css/app.css
-WORKDIR /home/gradle/src
+WORKDIR /home/gradle/
 RUN gradle war
 
 FROM tomcat:9.0.64-jre11 AS tomcat9

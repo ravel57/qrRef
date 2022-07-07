@@ -5,6 +5,5 @@ Front-end: https://github.com/ravel57/qrref-front
 Запуск Docker:
 -
 ``` 
-docker build -t qrref . \ 
-&& docker run -p 80:80 -p 443:443 --env url=[YOUR_DOMAIN] qrref 
+sudo docker build -t qrref . && sudo docker run -d --restart unless-stopped -p 443:443 --env url=[YOUR_DOMAIN] qrref
 ```
