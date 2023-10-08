@@ -1,4 +1,4 @@
-FROM node:current-alpine3.16 AS nodejs
+FROM node:18-alpine3.17 AS nodejs
 RUN apk add --no-cache git
 WORKDIR /usr/src/node
 RUN git clone https://github.com/ravel57/qrref-front.git
