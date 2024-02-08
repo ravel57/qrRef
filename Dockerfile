@@ -17,6 +17,6 @@ RUN gradle war
 FROM tomcat:9.0.64-jre11 AS tomcat9
 RUN rm -rf /usr/local/tomcat/webapps/* /usr/local/tomcat/conf/server.xml
 COPY ./src/main/resources/toTomcat/* /usr/local/tomcat/conf/
-COPY --from=gradle /home/gradle/src/build/libs/qrRef*.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=gradle /home/gradle/build/libs/qrRef*.war /usr/local/tomcat/webapps/ROOT.war
 CMD chmod +x /usr/local/tomcat/bin/catalina.sh
 CMD ["catalina.sh", "run"]
