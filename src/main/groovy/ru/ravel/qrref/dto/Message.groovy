@@ -1,14 +1,12 @@
 package ru.ravel.qrref.dto
 
 import groovy.transform.builder.Builder
-import lombok.Getter
-import lombok.Setter
+import lombok.Data
 
-@Setter
-@Getter
+@Data
 @Builder
 class Message {
 	String key
-	ru.ravel.qrref.enums.MessageType messageType
+	MessageType messageType
 	String message
 }

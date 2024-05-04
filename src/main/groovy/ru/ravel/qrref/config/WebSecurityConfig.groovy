@@ -13,12 +13,9 @@ class WebSecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		HttpSessionRequestCache requestCache = new HttpSessionRequestCache()
-		requestCache.setMatchingRequestParameterName(null)
-		return http
-				.csrf { it.disable() }
-				.authorizeHttpRequests { it.anyRequest().permitAll() }
+		return http.csrf { it.disable() }
 				.cors { it.disable() }
+				.authorizeHttpRequests { it.anyRequest().permitAll() }
 				.build()
 	}
 }

@@ -1,4 +1,4 @@
-package ru.ravel.qrref.enums
+package ru.ravel.qrref.dto
 
 enum MessageType {
 	URL,
