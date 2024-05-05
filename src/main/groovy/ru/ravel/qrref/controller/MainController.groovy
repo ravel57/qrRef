@@ -59,7 +59,8 @@ class MainController {
     }
 
     @PostMapping(value = "/text/{key}")
-    ResponseEntity<Object> postString(@PathVariable("key") String key, @RequestBody String text) {
+    ResponseEntity<Object> postString(@PathVariable("key") String key, @RequestBody Map<String, String> map) {
+        String text = map.text
         Message message = Message.builder()
                 .key(key)
                 .message(text)
@@ -73,13 +74,13 @@ class MainController {
     @ResponseBody
     ResponseEntity<Object> postFile(@PathVariable("key") String key,
                                     @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
-        String generateKey = keyService.generateKey(20)
+        String generateKey = keyService.generateKey(45)
         println(generateKey)
         File file = convert(multipartFile)
         fileMap.put(generateKey, file)
         Message message = Message.builder()
                 .key(key)
-                .message(generateKey)
+                .message("file/$generateKey")
                 .messageType(MessageType.FILE)
                 .build()
         socketService.sendStrToFront(message)
@@ -116,8 +117,7 @@ class MainController {
     }
 
     static String translateFileName(Path file) {
-        return Transliterator
-                .getInstance("Russian-Latin/BGN")
-                .transliterate(file.getFileName().toString().replace(" ", "_"));
+        return Transliterator.getInstance("Russian-Latin/BGN")
+                .transliterate(file.getFileName().toString().replace(" ", "_"))
     }
 }
