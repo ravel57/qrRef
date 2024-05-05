@@ -41,10 +41,6 @@ class MainController {
         return "index"
     }
 
-    @GetMapping("/favicon.ico")
-    ResponseEntity<Object> getFavicon() {
-        return new ResponseEntity<>(HttpStatus.OK)
-    }
 
     @GetMapping("/getKey")
     ResponseEntity<Object> getKey() {
@@ -52,11 +48,13 @@ class MainController {
         return ResponseEntity.ok().body(key)
     }
 
+
     @GetMapping("/getQr/{key}")
     ResponseEntity<Object> getQr(HttpServletResponse response, @PathVariable("key") String key) {
         qrService.getQr(key, response)
         return new ResponseEntity<>(HttpStatus.OK)
     }
+
 
     @PostMapping(value = "/text/{key}")
     ResponseEntity<Object> postString(@PathVariable("key") String key, @RequestBody Map<String, String> map) {
@@ -70,12 +68,12 @@ class MainController {
         return new ResponseEntity<>(HttpStatus.OK)
     }
 
+
     @PostMapping(value = "/file/{key}", consumes = ["multipart/form-data"])
     @ResponseBody
     ResponseEntity<Object> postFile(@PathVariable("key") String key,
                                     @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
         String generateKey = keyService.generateKey(45)
-        println(generateKey)
         File file = convert(multipartFile)
         fileMap.put(generateKey, file)
         Message message = Message.builder()
@@ -91,30 +89,33 @@ class MainController {
     @GetMapping("/file/{key}")
     void downloadFileBySecretKey(@PathVariable("key") String key, HttpServletResponse response) {
         try {
-            Path file = fileMap.get(key).toPath()
-            if (file != null & Files.exists(file)) {
+            Path path = fileMap[key].toPath()
+            if (path != null & Files.exists(path)) {
                 response.setContentType("application/other")
-                response.setContentLengthLong(Files.size(file))
-                response.setCharacterEncoding("UNICODE")
-                response.addHeader("Content-Disposition", "attachment; filename=" + translateFileName(file))
-                Files.copy(file, response.getOutputStream())
+                response.setContentLengthLong(Files.size(path))
+                response.setCharacterEncoding("UTF-8")
+                response.addHeader("Content-Disposition", "attachment; filename=" + translateFileName(path))
+                Files.copy(path, response.getOutputStream())
                 response.getOutputStream().flush()
+                path.toFile().delete()
             }
         } catch (IOException e) {
             logger.error(e.message)
         }
     }
 
-    private File convert(MultipartFile file) {
-        File convFile = new File(file.getOriginalFilename())
-        convFile.createNewFile()
-        try (InputStream is = file.getInputStream()) {
-            Files.copy(is, convFile.toPath())
+
+    private File convert(MultipartFile multipartFile) {
+        File file = new File(multipartFile.getOriginalFilename())
+        file.createNewFile()
+        try (OutputStream os = new FileOutputStream(file)) {
+            os.write(multipartFile.getBytes())
         } catch (e) {
-            logger.error(e.message)
+            logger.error(e.toString())
         }
-        return convFile
+        return file
     }
+
 
     static String translateFileName(Path file) {
         return Transliterator.getInstance("Russian-Latin/BGN")
