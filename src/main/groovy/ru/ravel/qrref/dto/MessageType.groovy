@@ -2,5 +2,6 @@ package ru.ravel.qrref.dto
 
 enum MessageType {
 	URL,
-	TEXT
+	TEXT,
+	FILE
 }

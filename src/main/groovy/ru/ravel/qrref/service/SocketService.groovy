@@ -12,6 +12,6 @@ class SocketService {
 	SimpMessagingTemplate simpMessaging
 
 	void sendStrToFront(Message message) {
-		simpMessaging.convertAndSend("/topic/activity/" + message.getKey(), message.getMessage())
+		simpMessaging.convertAndSend("/topic/activity/${message.key}", message.message)
 	}
 }

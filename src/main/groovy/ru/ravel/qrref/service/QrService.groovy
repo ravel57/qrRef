@@ -16,9 +16,10 @@ import java.nio.file.Path
 @Service
 class QrService {
 
-	private int height = 600
-	private int width = 600
-	private String format = "png"
+	private final int height = 600
+	private final int width = 600
+	private final String format = "png"
+	private final String url = System.getenv("url")
 
 
 	private void createQrFile(String data, Path path) throws WriterException, IOException {
@@ -31,8 +32,8 @@ class QrService {
 
 	void getQr(String key, HttpServletResponse response) {
 		try {
-			Path path = Path.of("%s.%s".formatted(key, format))
-			String data = "%s/?key=%s".formatted(System.getenv("url"), key)
+			Path path = Path.of("${key}.${format}")
+			String data = "${url}/?key=${key}"
 			createQrFile(data, path)
 			response.setContentType(MediaType.IMAGE_PNG_VALUE)
 			Files.copy(path, response.getOutputStream())

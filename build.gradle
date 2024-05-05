@@ -31,6 +31,7 @@ dependencies {
 	providedRuntime 'org.apache.tomcat.embed:tomcat-embed-core'
 	providedRuntime 'org.apache.tomcat.embed:tomcat-embed-jasper'
 	compileOnly 'javax.servlet:jsp-api:2.0'
+	implementation 'com.ibm.icu:icu4j:75.1'
 
 
 	compileOnly 'org.projectlombok:lombok:1.18.32'
