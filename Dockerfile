@@ -11,7 +11,6 @@ COPY --chown=gradle:gradle . /home/gradle/
 COPY --from=nodejs /usr/src/node/qrref-front/dist/static/index.js   /home/gradle/src/main/webapp/js/index.js
 COPY --from=nodejs /usr/src/node/qrref-front/dist/static/vendor.js  /home/gradle/src/main/webapp/js/vendor.js
 COPY --from=nodejs /usr/src/node/qrref-front/dist/static/index.css  /home/gradle/src/main/webapp/css/index.css
-COPY --from=nodejs /usr/src/node/qrref-front/dist/static/vendor.css /home/gradle/src/main/webapp/css/vendor.css
 WORKDIR /home/gradle/
 RUN ["gradle", "war"]
 
