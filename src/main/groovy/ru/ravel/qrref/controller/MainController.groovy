@@ -95,6 +95,7 @@ class MainController {
                 response.setContentLengthLong(Files.size(path))
                 response.setCharacterEncoding("UTF-8")
                 response.addHeader("Content-Disposition", "attachment; filename=" + translateFileName(path))
+                response.addHeader("Access-Control-Expose-Headers", "Content-Disposition")
                 Files.copy(path, response.getOutputStream())
                 response.getOutputStream().flush()
                 path.toFile().delete()
