@@ -1,0 +1,16 @@
+server:
+  # За nginx доверяем X-Forwarded-Proto/Host: иначе проверка Origin для WebSocket/SockJS считает
+  # https-запросы браузера «чужими» и отвечает 403.
+  forward-headers-strategy: framework
+spring:
+  application.name: qrRef
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+      enabled: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    cache: false

@@ -6,19 +6,25 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
 
+
 @Configuration
 @EnableWebSocketMessageBroker
 class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
+
+	String url = System.getenv("url")
 
 	@Override
 	void configureMessageBroker(MessageBrokerRegistry config) {
 		config.enableSimpleBroker("/topic")
 		config.setApplicationDestinationPrefixes("/app")
 	}
-	
+
 	@Override
 	void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/websocket").setAllowedOriginPatterns("http://localhost:5173").withSockJS()
+		// Свой домен (переменная окружения url) допускаем и по https, и по http; запросы с того же
+		// хоста (с учётом заголовков nginx) проходят проверку Origin в любом случае.
+		String[] origins = url ? ["https://${url}".toString(), "http://${url}".toString()] as String[] : [] as String[]
+		registry.addEndpoint("/websocket").setAllowedOriginPatterns(origins).withSockJS()
 	}
 
 }
