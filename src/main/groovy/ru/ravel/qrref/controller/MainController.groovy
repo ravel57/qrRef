@@ -69,7 +69,7 @@ class MainController {
 	ResponseEntity<Object> resetKey(HttpSession session) {
 		def old = (session.getAttribute("qrref_key") ?: "").toString().trim()
 		if (old) {
-			bridgeService.dropRoom(old)
+			closeRoom(old)
 		}
 		String key = keyService.generateKey(20)
 		session.setAttribute("qrref_key", key)
@@ -122,7 +122,7 @@ class MainController {
 				response.setContentType("application/other")
 				response.setContentLengthLong(Files.size(path))
 				response.setCharacterEncoding("UTF-8")
-				response.addHeader("Content-Disposition", "attachment; filename=" + translateFileName(path))
+				response.addHeader("Content-Disposition", "attachment; filename=${translateFileName(path)}")
 				response.addHeader("Access-Control-Expose-Headers", "Content-Disposition")
 				Files.copy(path, response.getOutputStream())
 				response.getOutputStream().flush()
@@ -197,6 +197,13 @@ class MainController {
 		response.getOutputStream().flush()
 	}
 
+	/** Завершает чат: комната расформировывается, оба участника получают сообщение `closed`. */
+	@PostMapping("/room/leave/{key}")
+	ResponseEntity<Object> leaveRoom(@PathVariable("key") String key) {
+		closeRoom((key ?: "").trim())
+		return ResponseEntity.ok([ok: true])
+	}
+
 	@PostMapping("/room/text/{key}")
 	ResponseEntity<Object> postRoomText(@PathVariable("key") String key, @RequestBody Map<String, String> body) {
 		String k = (key ?: "").trim()
@@ -229,5 +236,14 @@ class MainController {
 	static String translateFileName(Path file) {
 		return Transliterator.getInstance("Russian-Latin/BGN")
 				.transliterate(file.getFileName().toString().replace(" ", "_"))
+	}
+
+	/** Сообщает участникам комнаты, что чат закрыт, и расформировывает её. */
+	private void closeRoom(String key) {
+		def roomId = bridgeService.roomOf(key)
+		if (roomId) {
+			socketService.sendToRoom(roomId, [type: "closed", from: key, ts: System.currentTimeMillis()])
+		}
+		bridgeService.dropRoom(key)
 	}
 }
