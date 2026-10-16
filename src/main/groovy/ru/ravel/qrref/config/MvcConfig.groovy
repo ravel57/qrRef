@@ -16,13 +16,14 @@ class MvcConfig implements WebMvcConfigurer {
 	@Override
 	void addViewControllers(ViewControllerRegistry registry) {
 		registry.addViewController("/").setViewName("index")
+		registry.addViewController("/privacy").setViewName("forward:/privacy.html")
 	}
 
 
 	@Override
 	void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/**")
-				.addResourceLocations("classpath:/static/")
+			.addResourceLocations("classpath:/static/")
 	}
 
 }
